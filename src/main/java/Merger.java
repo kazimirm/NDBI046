@@ -7,10 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Merger {
 
@@ -21,10 +18,13 @@ public class Merger {
     private static List<PohybObyvatelObce> pohybObyvatel = new ArrayList<>();
 
     private static HashMap<String, HashMap<String, Integer>> okresy = new HashMap<>();
+    private static HashMap<String, String> stredniPocetObyvatel = new HashMap<>();
+    private static HashMap<String, String> okresKodToOkres = new HashMap<>();
 
     public static void main(String[] args) {
         deserializeInputs();
         mergeData();
+        System.out.println("");
     }
 
     private static void deserializeInputs() {
@@ -62,23 +62,61 @@ public class Merger {
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
-
-        System.out.println("");
     }
 
     private static void mergeData() {
-        for (Poskytovatel poskytovatel : poskytovatele) {
-            String okresCode = poskytovatel.getOkresCode();
-            if (okresy.containsKey(okresCode)) {
-                HashMap<String, Integer> formyPece = okresy.get(okresCode) == null ? new HashMap<>() : okresy.get(okresCode);
-
-                if (formyPece.containsKey(poskytovatel.getFormaPece())) {
-                    Integer i = formyPece.get(poskytovatel.getFormaPece()) + 1;
-                    formyPece.put(poskytovatel.getFormaPece(), i);
-                } else {
-                    formyPece.put(poskytovatel.getFormaPece(), 1);
-                }
+        // STREDNY STAV
+        for (PohybObyvatelObce pohyb : pohybObyvatel) {
+            if ("DEM0004".equals(pohyb.getVuk())) { // "DEM0004","Střední stav obyvatel","2406","43"
+                stredniPocetObyvatel.put(pohyb.getVuzemi_txt(), pohyb.getHodnota());
             }
         }
+
+        for (Poskytovatel poskytovatel : poskytovatele) {
+
+            String[] formy = poskytovatel.getFormaPece().split(", ");
+            if ("".equals(poskytovatel.getFormaPece())) {
+                //System.out.println(""); nothing to to do there, just for debug
+            }
+
+            // OKRESY & forma pece
+            String okresCode = poskytovatel.getOkresCode();
+            okresKodToOkres.put(okresCode, poskytovatel.getOkres());
+            if (okresy.containsKey(okresCode)) {
+                HashMap<String, Integer> formyPece = okresy.get(okresCode) == null ? new HashMap<>() : okresy.get(okresCode);
+                for (String forma : formy) {
+                    if (formyPece.containsKey(forma)) {
+                        Integer i = formyPece.get(forma) + 1;
+                        formyPece.put(forma, i);
+                    } else {
+                        formyPece.put(forma, 1);
+                    }
+                }
+            } else {
+                for (String forma : formy) {
+                    HashMap<String, Integer> formyPece = new HashMap<>();
+                    formyPece.put(forma, 1);
+                    okresy.put(okresCode, formyPece);
+                }
+            }
+
+        }
+
+
+//        for (Map.Entry<String, HashMap<String, Integer>> okres : okresy.entrySet()) {
+//
+//            String kodOkresu = okres.getKey();
+//            HashMap<String, Integer> formaPece = okres.getValue();
+//
+//            Map obj = new HashMap();
+//            JsonArray array = Json.createArrayBuilder().build();
+//            obj.put("okres", kodOkresu);
+//            String nazovOkresu = okresKodToOkres.get(kodOkresu);
+//            obj.put("stredni_stav_obyvatel", stredniPocetObyvatel.get(nazovOkresu));
+//
+//            for (Map.Entry<String, Integer> forma : formaPece.entrySet()) {
+//
+//            }
+//        }
     }
 }

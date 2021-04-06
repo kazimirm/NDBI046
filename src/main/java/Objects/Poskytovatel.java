@@ -1,39 +1,79 @@
 package Objects;
 
 public class Poskytovatel {
-    String mistoPoskytovaniId;
-    String zdravotnickeZarizeniId;
-    String kod;
-    String nazevZarizeni;
-    String druhZarizeni;
-    String obec;
-    String psc;
-    String ulice;
-    String cisloDomovniOrientacni;
-    String kraj;
-    String krajCode;
-    String okres;
-    String okresCode;
-    String spravniObvod;
-    String poskytovatelTelefon;
-    String poskytovatelFax;
-    String poskytovatelEmail;
-    String poskytovatelWeb;
-    String ico;
-    String typOsoby;
-    String pravniFormaKod;
-    String krajCodeSidlo;
-    String okresCodeSidlo;
-    String obecSidlo;
-    String pscSidlo;
-    String uliceSidlo;
-    String cisloDomovniOrientacniSidlo;
-    String oborPece;
-    String formaPece;
-    String druhPece;
-    String odbornyZastupce;
-    String lat;
-    String lng;
+
+    private String mistoPoskytovaniId;
+    private String zdravotnickeZarizeniId;
+    private String kod;
+    private String nazevZarizeni;
+    private String druhZarizeni;
+    private String obec;
+    private String psc;
+    private String ulice;
+    private String cisloDomovniOrientacni;
+    private String kraj;
+    private String krajCode;
+    private String okres;
+    private String okresCode;
+    private String spravniObvod;
+    private String poskytovatelTelefon;
+    private String poskytovatelFax;
+    private String poskytovatelEmail;
+    private String poskytovatelWeb;
+    private String ico;
+    private String typOsoby;
+    private String pravniFormaKod;
+    private String krajCodeSidlo;
+    private String okresCodeSidlo;
+    private String obecSidlo;
+    private String pscSidlo;
+    private String uliceSidlo;
+    private String cisloDomovniOrientacniSidlo;
+    private String oborPece;
+    private String formaPece;
+    private String druhPece;
+    private String odbornyZastupce;
+    private String lat;
+    private String lng;
+
+    public Poskytovatel (String[] record){
+        this.mistoPoskytovaniId = record[0];
+        this.zdravotnickeZarizeniId = record[1];
+        this.kod = record[2];
+        this.nazevZarizeni = record[3];
+        this.druhZarizeni = record[4];
+        this.obec = record[5];
+        this.psc = record[6];
+        this.ulice = record[7];
+        this.cisloDomovniOrientacni = record[8];
+        this.kraj = record[9];
+        this.krajCode = record[10];
+        this.okres = record[11];
+        this.okresCode = record[12];
+        this.spravniObvod = record[13];
+        this.poskytovatelTelefon = record[14];
+        this.poskytovatelFax = record[15];
+        this.poskytovatelEmail = record[16];
+        this.poskytovatelWeb = record[17];
+        this.ico = record[18];
+        this.typOsoby = record[19];
+        this.pravniFormaKod = record[20];
+        this.krajCodeSidlo = record[21];
+        this.okresCodeSidlo = record[22];
+        this.obecSidlo = record[23];
+        this.pscSidlo = record[24];
+        this.uliceSidlo = record[25];
+        this.cisloDomovniOrientacniSidlo = record[26];
+        this.oborPece = record[27];
+        this.formaPece = record[28];
+        this.druhPece = record[29];
+        this.odbornyZastupce = record[30];
+        this.lat = record[31];
+        this.lng = record[32];
+    }
+
+    public Poskytovatel() {
+    }
 
     public String getMistoPoskytovaniId() {
         return mistoPoskytovaniId;

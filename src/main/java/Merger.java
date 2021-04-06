@@ -8,6 +8,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,8 +20,11 @@ public class Merger {
     private static List<Poskytovatel> poskytovatele = new ArrayList<>();
     private static List<PohybObyvatelObce> pohybObyvatel = new ArrayList<>();
 
-    public static void main (String[] args){
+    private static HashMap<String, HashMap<String, Integer>> okresy = new HashMap<>();
+
+    public static void main(String[] args) {
         deserializeInputs();
+        mergeData();
     }
 
     private static void deserializeInputs() {
@@ -62,14 +66,19 @@ public class Merger {
         System.out.println("");
     }
 
+    private static void mergeData() {
+        for (Poskytovatel poskytovatel : poskytovatele) {
+            String okresCode = poskytovatel.getOkresCode();
+            if (okresy.containsKey(okresCode)) {
+                HashMap<String, Integer> formyPece = okresy.get(okresCode) == null ? new HashMap<>() : okresy.get(okresCode);
 
-
-    private static StringReader getFileFromResourceAsStream(String fileName) {
-
-        String input = new Scanner(Merger.class.getResourceAsStream(fileName), "UTF-8").useDelimiter("\\A").next();
-        StringReader stringReader = new StringReader(input);
-
-        return stringReader;
-
+                if (formyPece.containsKey(poskytovatel.getFormaPece())) {
+                    Integer i = formyPece.get(poskytovatel.getFormaPece()) + 1;
+                    formyPece.put(poskytovatel.getFormaPece(), i);
+                } else {
+                    formyPece.put(poskytovatel.getFormaPece(), 1);
+                }
+            }
+        }
     }
 }

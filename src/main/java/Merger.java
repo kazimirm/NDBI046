@@ -3,6 +3,8 @@ import Objects.Poskytovatel;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,7 +20,7 @@ public class Merger {
     private static List<PohybObyvatelObce> pohybObyvatel = new ArrayList<>();
 
     private static HashMap<String, HashMap<String, Integer>> okresy = new HashMap<>();
-    private static HashMap<String, String> stredniPocetObyvatel = new HashMap<>();
+    private static HashMap<String, Integer> stredniPocetObyvatel = new HashMap<>();
     private static HashMap<String, String> okresKodToOkres = new HashMap<>();
 
     public static void main(String[] args) {
@@ -68,7 +70,7 @@ public class Merger {
         // STREDNY STAV
         for (PohybObyvatelObce pohyb : pohybObyvatel) {
             if ("DEM0004".equals(pohyb.getVuk())) { // "DEM0004","Střední stav obyvatel","2406","43"
-                stredniPocetObyvatel.put(pohyb.getVuzemi_txt(), pohyb.getHodnota());
+                stredniPocetObyvatel.put(pohyb.getVuzemi_txt(), Integer.parseInt(pohyb.getHodnota()));
             }
         }
 
@@ -102,21 +104,28 @@ public class Merger {
 
         }
 
+        JSONObject jsonFile = new JSONObject();
+        JSONArray data = new JSONArray();
+        for (Map.Entry<String, HashMap<String, Integer>> okres : okresy.entrySet()) {
 
-//        for (Map.Entry<String, HashMap<String, Integer>> okres : okresy.entrySet()) {
-//
-//            String kodOkresu = okres.getKey();
-//            HashMap<String, Integer> formaPece = okres.getValue();
-//
-//            Map obj = new HashMap();
-//            JsonArray array = Json.createArrayBuilder().build();
-//            obj.put("okres", kodOkresu);
-//            String nazovOkresu = okresKodToOkres.get(kodOkresu);
-//            obj.put("stredni_stav_obyvatel", stredniPocetObyvatel.get(nazovOkresu));
-//
-//            for (Map.Entry<String, Integer> forma : formaPece.entrySet()) {
-//
-//            }
-//        }
+            String kodOkresu = okres.getKey();
+            HashMap<String, Integer> formaPece = okres.getValue();
+
+            LinkedHashMap obj = new LinkedHashMap();
+            obj.put("okres", kodOkresu);
+            String nazovOkresu = okresKodToOkres.get(kodOkresu);
+            obj.put("stredni_stav_obyvatel", stredniPocetObyvatel.get(nazovOkresu));
+
+            Map statistiky = new HashMap();
+            for (Map.Entry<String, Integer> forma : formaPece.entrySet()) {
+                statistiky.put("".equals(forma.getKey()) ? "neznama" : forma.getKey() , forma.getValue());
+            }
+            obj.put("pocty_dle_formy_pece", statistiky);
+            data.put(obj);
+        }
+        jsonFile.put("data", data);
+        System.out.println(jsonFile);
+        System.out.println("");
+
     }
 }
